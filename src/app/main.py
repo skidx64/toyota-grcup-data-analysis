@@ -815,42 +815,63 @@ def render_driver_card(driver_row):
     qualifying = int(driver_row.get('qualifying_score', 50)) if pd.notna(driver_row.get('qualifying_score')) else 50
     racecraft = int(driver_row.get('racecraft_score', 50)) if pd.notna(driver_row.get('racecraft_score')) else 50
 
-    # Determine tier based on overall rating
+    # Determine tier based on overall rating with more explicit styling
     if overall_rating >= 80:
         tier = "gold"
         tier_gradient = "linear-gradient(180deg, #FFD700 0%, #B8860B 100%)"
         tier_border = "rgba(255, 215, 0, 0.9)"
+        tier_shadow = "0 16px 40px rgba(255, 215, 0, 0.8)"
     elif overall_rating >= 65:
         tier = "silver"
         tier_gradient = "linear-gradient(180deg, #C0C0C0 0%, #808080 100%)"
         tier_border = "rgba(192, 192, 192, 0.9)"
+        tier_shadow = "0 16px 40px rgba(192, 192, 192, 0.8)"
     else:
         tier = "bronze"
         tier_gradient = "linear-gradient(180deg, #CD7F32 0%, #8B5A2B 100%)"
         tier_border = "rgba(205, 127, 50, 0.9)"
+        tier_shadow = "0 16px 40px rgba(205, 127, 50, 0.8)"
 
     card_html = f"""
-    <div class="driver-card" style="background: {tier_gradient}; border-color: {tier_border};">
-        <div class="driver-rating" style="font-size: 2.5rem; font-weight: 900; margin: 0.5rem 0; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+    <div class="driver-card" style="
+        background: {tier_gradient} !important;
+        border: 2px solid {tier_border} !important;
+        min-height: 400px !important;
+        max-height: 440px !important;
+        border-radius: 12px;
+        padding: 2rem;
+        color: white;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.5);
+        margin: 0.65rem;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        word-wrap: break-word;
+    ">
+        <div class="driver-rating" style="font-size: 3.5rem; font-weight: 900; margin: 1rem 0; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
             {overall_rating}
         </div>
-        <div class="card-name">Driver #{driver_num}</div>
-        <div style="width: 100%; margin: 0.75rem 0;">
-            <div class="card-stat">
-                <span class="stat-label">PACE</span>
-                <span class="stat-value">{pace}</span>
+        <div class="card-name" style="font-size: 1.4rem; font-weight: 700; text-align: center; margin-bottom: 1rem; color: white;">Driver #{driver_num}</div>
+        <div style="width: 100%; margin: 1rem 0;">
+            <div class="card-stat" style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-size: 0.95rem; padding: 0.3rem 0;">
+                <span class="stat-label" style="color: rgba(255,255,255,0.85);">PACE</span>
+                <span class="stat-value" style="font-weight: 700; color: white;">{pace}</span>
             </div>
-            <div class="card-stat">
-                <span class="stat-label">CONSISTENCY</span>
-                <span class="stat-value">{consistency}</span>
+            <div class="card-stat" style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-size: 0.95rem; padding: 0.3rem 0;">
+                <span class="stat-label" style="color: rgba(255,255,255,0.85);">CONSISTENCY</span>
+                <span class="stat-value" style="font-weight: 700; color: white;">{consistency}</span>
             </div>
-            <div class="card-stat">
-                <span class="stat-label">QUALIFYING</span>
-                <span class="stat-value">{qualifying}</span>
+            <div class="card-stat" style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-size: 0.95rem; padding: 0.3rem 0;">
+                <span class="stat-label" style="color: rgba(255,255,255,0.85);">QUALIFYING</span>
+                <span class="stat-value" style="font-weight: 700; color: white;">{qualifying}</span>
             </div>
-            <div class="card-stat">
-                <span class="stat-label">RACECRAFT</span>
-                <span class="stat-value">{racecraft}</span>
+            <div class="card-stat" style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-size: 0.95rem; padding: 0.3rem 0;">
+                <span class="stat-label" style="color: rgba(255,255,255,0.85);">RACECRAFT</span>
+                <span class="stat-value" style="font-weight: 700; color: white;">{racecraft}</span>
             </div>
         </div>
     </div>
@@ -884,41 +905,60 @@ def render_track_card(track_row):
     weather_icon = "🌤️"
 
     card_html = f"""
-    <div class="track-card">
-        <div class="track-header">
-            <div class="track-code">{track_code}</div>
-            <div class="track-name">{track_name}</div>
+    <div class="track-card" style="
+        background: linear-gradient(180deg, #8B0000 0%, #4B0000 100%) !important;
+        border-radius: 12px;
+        padding: 2.5rem;
+        color: white;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.5);
+        margin: 0.78rem;
+        transition: all 0.3s ease;
+        height: 100%;
+        min-height: 480px !important;
+        max-height: 520px !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 2px solid rgba(139, 0, 0, 0.8);
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        word-wrap: break-word;
+    ">
+        <div class="track-header" style="text-align: center; margin-bottom: 1.25rem;">
+            <div class="track-code" style="font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 0.5rem; letter-spacing: 1.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">{track_code}</div>
+            <div class="track-name" style="font-size: 1.15rem; font-weight: 600; color: rgba(255,255,255,0.95); margin-bottom: 0.25rem;">{track_name}</div>
         </div>
-        <div class="track-location">{location} {weather_icon}</div>
-        <div style="display: flex; justify-content: center; margin: 0.5rem 0;">
+        <div class="track-location" style="text-align: center; font-size: 0.9rem; color: rgba(255,255,255,0.85); margin-bottom: 1rem; font-weight: 500;">{location} {weather_icon}</div>
+        <div style="display: flex; justify-content: center; margin: 0.75rem 0;">
             <span style="
                 background: {type_color};
                 color: #000;
-                padding: 0.25rem 0.75rem;
-                border-radius: 12px;
-                font-size: 0.7rem;
+                padding: 0.35rem 1rem;
+                border-radius: 14px;
+                font-size: 0.8rem;
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
             ">{track_type}</span>
         </div>
-        <div class="track-divider"></div>
-        <div class="track-stats-grid">
-            <div class="track-stat-item">
-                <div class="track-stat-label">Length</div>
-                <div class="track-stat-value">{length:.2f} mi</div>
+        <div class="track-divider" style="height: 2px; background: rgba(255,255,255,0.3); margin: 1.25rem 0; border-radius: 1px;"></div>
+        <div class="track-stats-grid" style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+            <div class="track-stat-item" style="background: rgba(255,255,255,0.15); padding: 0.75rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                <div class="track-stat-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 600;">Length</div>
+                <div class="track-stat-value" style="font-size: 1.15rem; font-weight: 700; color: white;">{length:.2f} mi</div>
             </div>
-            <div class="track-stat-item">
-                <div class="track-stat-label">Difficulty</div>
-                <div class="track-stat-value">{int(difficulty)}/100</div>
+            <div class="track-stat-item" style="background: rgba(255,255,255,0.15); padding: 0.75rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                <div class="track-stat-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 600;">Difficulty</div>
+                <div class="track-stat-value" style="font-size: 1.15rem; font-weight: 700; color: white;">{int(difficulty)}/100</div>
             </div>
-            <div class="track-stat-item">
-                <div class="track-stat-label">Best Lap</div>
-                <div class="track-stat-value">{format_lap_time(lap_record)}</div>
+            <div class="track-stat-item" style="background: rgba(255,255,255,0.15); padding: 0.75rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                <div class="track-stat-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 600;">Best Lap</div>
+                <div class="track-stat-value" style="font-size: 1.15rem; font-weight: 700; color: white;">{format_lap_time(lap_record)}</div>
             </div>
-            <div class="track-stat-item">
-                <div class="track-stat-label">Top Speed</div>
-                <div class="track-stat-value">{int(top_speed)} kph</div>
+            <div class="track-stat-item" style="background: rgba(255,255,255,0.15); padding: 0.75rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                <div class="track-stat-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 600;">Top Speed</div>
+                <div class="track-stat-value" style="font-size: 1.15rem; font-weight: 700; color: white;">{int(top_speed)} kph</div>
             </div>
         </div>
     </div>
