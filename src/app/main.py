@@ -815,42 +815,63 @@ def render_driver_card(driver_row):
     qualifying = int(driver_row.get('qualifying_score', 50)) if pd.notna(driver_row.get('qualifying_score')) else 50
     racecraft = int(driver_row.get('racecraft_score', 50)) if pd.notna(driver_row.get('racecraft_score')) else 50
 
-    # Determine tier based on overall rating
+    # Determine tier based on overall rating with more explicit styling
     if overall_rating >= 80:
         tier = "gold"
         tier_gradient = "linear-gradient(180deg, #FFD700 0%, #B8860B 100%)"
         tier_border = "rgba(255, 215, 0, 0.9)"
+        tier_shadow = "0 16px 40px rgba(255, 215, 0, 0.8)"
     elif overall_rating >= 65:
         tier = "silver"
         tier_gradient = "linear-gradient(180deg, #C0C0C0 0%, #808080 100%)"
         tier_border = "rgba(192, 192, 192, 0.9)"
+        tier_shadow = "0 16px 40px rgba(192, 192, 192, 0.8)"
     else:
         tier = "bronze"
         tier_gradient = "linear-gradient(180deg, #CD7F32 0%, #8B5A2B 100%)"
         tier_border = "rgba(205, 127, 50, 0.9)"
+        tier_shadow = "0 16px 40px rgba(205, 127, 50, 0.8)"
 
     card_html = f"""
-    <div class="driver-card" style="background: {tier_gradient}; border-color: {tier_border};">
-        <div class="driver-rating" style="font-size: 2.5rem; font-weight: 900; margin: 0.5rem 0; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+    <div class="driver-card" style="
+        background: {tier_gradient} !important;
+        border: 2px solid {tier_border} !important;
+        min-height: 400px !important;
+        max-height: 440px !important;
+        border-radius: 12px;
+        padding: 2rem;
+        color: white;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.15), inset 0 -1px 0 rgba(0,0,0,0.5);
+        margin: 0.65rem;
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        word-wrap: break-word;
+    ">
+        <div class="driver-rating" style="font-size: 3.5rem; font-weight: 900; margin: 1rem 0; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
             {overall_rating}
         </div>
-        <div class="card-name">Driver #{driver_num}</div>
-        <div style="width: 100%; margin: 0.75rem 0;">
-            <div class="card-stat">
-                <span class="stat-label">PACE</span>
-                <span class="stat-value">{pace}</span>
+        <div class="card-name" style="font-size: 1.4rem; font-weight: 700; text-align: center; margin-bottom: 1rem; color: white;">Driver #{driver_num}</div>
+        <div style="width: 100%; margin: 1rem 0;">
+            <div class="card-stat" style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-size: 0.95rem; padding: 0.3rem 0;">
+                <span class="stat-label" style="color: rgba(255,255,255,0.85);">PACE</span>
+                <span class="stat-value" style="font-weight: 700; color: white;">{pace}</span>
             </div>
-            <div class="card-stat">
-                <span class="stat-label">CONSISTENCY</span>
-                <span class="stat-value">{consistency}</span>
+            <div class="card-stat" style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-size: 0.95rem; padding: 0.3rem 0;">
+                <span class="stat-label" style="color: rgba(255,255,255,0.85);">CONSISTENCY</span>
+                <span class="stat-value" style="font-weight: 700; color: white;">{consistency}</span>
             </div>
-            <div class="card-stat">
-                <span class="stat-label">QUALIFYING</span>
-                <span class="stat-value">{qualifying}</span>
+            <div class="card-stat" style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-size: 0.95rem; padding: 0.3rem 0;">
+                <span class="stat-label" style="color: rgba(255,255,255,0.85);">QUALIFYING</span>
+                <span class="stat-value" style="font-weight: 700; color: white;">{qualifying}</span>
             </div>
-            <div class="card-stat">
-                <span class="stat-label">RACECRAFT</span>
-                <span class="stat-value">{racecraft}</span>
+            <div class="card-stat" style="display: flex; justify-content: space-between; margin: 0.5rem 0; font-size: 0.95rem; padding: 0.3rem 0;">
+                <span class="stat-label" style="color: rgba(255,255,255,0.85);">RACECRAFT</span>
+                <span class="stat-value" style="font-weight: 700; color: white;">{racecraft}</span>
             </div>
         </div>
     </div>
@@ -884,41 +905,60 @@ def render_track_card(track_row):
     weather_icon = "🌤️"
 
     card_html = f"""
-    <div class="track-card">
-        <div class="track-header">
-            <div class="track-code">{track_code}</div>
-            <div class="track-name">{track_name}</div>
+    <div class="track-card" style="
+        background: linear-gradient(180deg, #8B0000 0%, #4B0000 100%) !important;
+        border-radius: 12px;
+        padding: 2.5rem;
+        color: white;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.6), inset 0 1px 0 rgba(255,255,255,0.1), inset 0 -1px 0 rgba(0,0,0,0.5);
+        margin: 0.78rem;
+        transition: all 0.3s ease;
+        height: 100%;
+        min-height: 480px !important;
+        max-height: 520px !important;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 2px solid rgba(139, 0, 0, 0.8);
+        position: relative;
+        cursor: pointer;
+        overflow: hidden;
+        word-wrap: break-word;
+    ">
+        <div class="track-header" style="text-align: center; margin-bottom: 1.25rem;">
+            <div class="track-code" style="font-size: 2.5rem; font-weight: 800; color: white; margin-bottom: 0.5rem; letter-spacing: 1.5px; text-shadow: 0 2px 4px rgba(0,0,0,0.2);">{track_code}</div>
+            <div class="track-name" style="font-size: 1.15rem; font-weight: 600; color: rgba(255,255,255,0.95); margin-bottom: 0.25rem;">{track_name}</div>
         </div>
-        <div class="track-location">{location} {weather_icon}</div>
-        <div style="display: flex; justify-content: center; margin: 0.5rem 0;">
+        <div class="track-location" style="text-align: center; font-size: 0.9rem; color: rgba(255,255,255,0.85); margin-bottom: 1rem; font-weight: 500;">{location} {weather_icon}</div>
+        <div style="display: flex; justify-content: center; margin: 0.75rem 0;">
             <span style="
                 background: {type_color};
                 color: #000;
-                padding: 0.25rem 0.75rem;
-                border-radius: 12px;
-                font-size: 0.7rem;
+                padding: 0.35rem 1rem;
+                border-radius: 14px;
+                font-size: 0.8rem;
                 font-weight: 700;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
             ">{track_type}</span>
         </div>
-        <div class="track-divider"></div>
-        <div class="track-stats-grid">
-            <div class="track-stat-item">
-                <div class="track-stat-label">Length</div>
-                <div class="track-stat-value">{length:.2f} mi</div>
+        <div class="track-divider" style="height: 2px; background: rgba(255,255,255,0.3); margin: 1.25rem 0; border-radius: 1px;"></div>
+        <div class="track-stats-grid" style="display: grid; grid-template-columns: 1fr; gap: 1rem;">
+            <div class="track-stat-item" style="background: rgba(255,255,255,0.15); padding: 0.75rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                <div class="track-stat-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 600;">Length</div>
+                <div class="track-stat-value" style="font-size: 1.15rem; font-weight: 700; color: white;">{length:.2f} mi</div>
             </div>
-            <div class="track-stat-item">
-                <div class="track-stat-label">Difficulty</div>
-                <div class="track-stat-value">{int(difficulty)}/100</div>
+            <div class="track-stat-item" style="background: rgba(255,255,255,0.15); padding: 0.75rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                <div class="track-stat-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 600;">Difficulty</div>
+                <div class="track-stat-value" style="font-size: 1.15rem; font-weight: 700; color: white;">{int(difficulty)}/100</div>
             </div>
-            <div class="track-stat-item">
-                <div class="track-stat-label">Best Lap</div>
-                <div class="track-stat-value">{format_lap_time(lap_record)}</div>
+            <div class="track-stat-item" style="background: rgba(255,255,255,0.15); padding: 0.75rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                <div class="track-stat-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 600;">Best Lap</div>
+                <div class="track-stat-value" style="font-size: 1.15rem; font-weight: 700; color: white;">{format_lap_time(lap_record)}</div>
             </div>
-            <div class="track-stat-item">
-                <div class="track-stat-label">Top Speed</div>
-                <div class="track-stat-value">{int(top_speed)} kph</div>
+            <div class="track-stat-item" style="background: rgba(255,255,255,0.15); padding: 0.75rem; border-radius: 8px; text-align: center; backdrop-filter: blur(10px);">
+                <div class="track-stat-label" style="font-size: 0.75rem; color: rgba(255,255,255,0.8); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.3rem; font-weight: 600;">Top Speed</div>
+                <div class="track-stat-value" style="font-size: 1.15rem; font-weight: 700; color: white;">{int(top_speed)} kph</div>
             </div>
         </div>
     </div>
@@ -969,68 +1009,79 @@ def show_driver_detail(driver_number):
 
     with col1:
         st.markdown("#### Widget 1: Performance Radar")
-        if driver_stats is not None:
-            categories = ['Braking', 'Cornering', 'Throttle', 'Consistency', 'Racecraft', 'Qualifying']
-            values = [
-                driver_stats.get('braking_score', 50),
-                driver_stats.get('cornering_score', 50),
-                driver_stats.get('throttle_score', 50),
-                driver_stats.get('consistency_score', 50),
-                driver_stats.get('racecraft_score', 50),
-                driver_stats.get('qualifying_score', 50)
-            ]
+        try:
+            if driver_stats is not None:
+                categories = ['Braking', 'Cornering', 'Throttle', 'Consistency', 'Racecraft', 'Qualifying']
+                values = [
+                    float(driver_stats.get('braking_score', 50) or 50),
+                    float(driver_stats.get('cornering_score', 50) or 50),
+                    float(driver_stats.get('throttle_score', 50) or 50),
+                    float(driver_stats.get('consistency_score', 50) or 50),
+                    float(driver_stats.get('racecraft_score', 50) or 50),
+                    float(driver_stats.get('qualifying_score', 50) or 50)
+                ]
 
-            fig = go.Figure(data=go.Scatterpolar(
-                r=values,
-                theta=categories,
-                fill='toself',
-                line=dict(color='#8B0000', width=2),
-                fillcolor='rgba(139, 0, 0, 0.3)'
-            ))
+                fig = go.Figure(data=go.Scatterpolar(
+                    r=values,
+                    theta=categories,
+                    fill='toself',
+                    line=dict(color='#8B0000', width=2),
+                    fillcolor='rgba(139, 0, 0, 0.3)'
+                ))
 
-            fig.update_layout(
-                polar=dict(
-                    radialaxis=dict(visible=True, range=[0, 100]),
-                    bgcolor='rgba(0,0,0,0.1)'
-                ),
-                showlegend=False,
-                height=350,
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#E0E0E0')
-            )
+                fig.update_layout(
+                    polar=dict(
+                        radialaxis=dict(visible=True, range=[0, 100]),
+                        bgcolor='rgba(0,0,0,0.1)'
+                    ),
+                    showlegend=False,
+                    height=350,
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='#E0E0E0')
+                )
 
-            st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Driver stats not available")
+        except Exception as e:
+            st.error(f"Error loading radar chart: {str(e)}")
+            st.write("Debug - driver_stats:", driver_stats)
 
     with col2:
         st.markdown("#### Widget 2: Track Suitability Matrix")
 
-        # Get best lap per track for this driver
-        track_performance = driver_data['best_laps']
+        try:
+            # Get best lap per track for this driver
+            track_performance = driver_data['best_laps']
 
-        if not track_performance.empty:
-            # Create heatmap-style display
-            st.markdown("""
-            <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;">
-            """, unsafe_allow_html=True)
-
-            for _, row in track_performance.iterrows():
-                track_code = row['track_code']
-                best_lap = format_lap_time(row['best_lap_seconds'])
-
-                # Simple color coding (green/yellow/red based on relative performance)
-                color = "#4CAF50"  # Green by default
-
-                st.markdown(f"""
-                <div style="display: flex; justify-content: space-between; padding: 0.5rem; margin: 0.25rem 0; background: {color}22; border-left: 3px solid {color}; border-radius: 4px;">
-                    <span style="font-weight: 600; color: #E0E0E0;">{track_code}</span>
-                    <span style="color: #E0E0E0;">{best_lap}</span>
-                </div>
+            if not track_performance.empty:
+                # Create heatmap-style display
+                st.markdown("""
+                <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;">
                 """, unsafe_allow_html=True)
 
-            st.markdown("</div>", unsafe_allow_html=True)
-        else:
-            st.info("No track data available")
+                for _, row in track_performance.iterrows():
+                    track_code = row['track_code']
+                    best_lap = format_lap_time(row['best_lap_seconds'])
+
+                    # Simple color coding (green/yellow/red based on relative performance)
+                    color = "#4CAF50"  # Green by default
+
+                    st.markdown(f"""
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; margin: 0.25rem 0; background: {color}22; border-left: 3px solid {color}; border-radius: 4px;">
+                        <span style="font-weight: 600; color: #E0E0E0;">{track_code}</span>
+                        <span style="color: #E0E0E0;">{best_lap}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                st.markdown("</div>", unsafe_allow_html=True)
+            else:
+                st.info("No track performance data available")
+                st.write(f"Debug - Track data rows: {len(track_performance)}")
+        except Exception as e:
+            st.error(f"Error loading track matrix: {str(e)}")
+            st.write("Debug - best_laps data:", driver_data.get('best_laps', 'N/A'))
 
     # Row 2: Season Progression + Head-to-Head
     col1, col2 = st.columns(2)
@@ -1068,36 +1119,43 @@ def show_driver_detail(driver_number):
     with col2:
         st.markdown("#### Widget 4: Head-to-Head Comparison")
 
-        # Get all drivers for comparison
-        all_drivers_df = get_all_drivers()
-        other_drivers = all_drivers_df[all_drivers_df['driver_number'] != driver_number]['driver_number'].tolist()
+        try:
+            # Get all drivers for comparison
+            all_drivers_df = get_all_drivers()
+            other_drivers = all_drivers_df[all_drivers_df['driver_number'] != driver_number]['driver_number'].tolist()
 
-        if other_drivers:
-            compare_driver = st.selectbox("Select driver to compare", other_drivers, key=f"compare_{driver_number}")
+            if other_drivers:
+                compare_driver = st.selectbox("Select driver to compare", other_drivers, key=f"compare_{driver_number}")
 
-            if compare_driver:
-                compare_data = get_driver_details(compare_driver)
-                compare_stats = compare_data['stats'].iloc[0] if not compare_data['stats'].empty else None
+                if compare_driver:
+                    compare_data = get_driver_details(compare_driver)
+                    compare_stats = compare_data['stats'].iloc[0] if not compare_data['stats'].empty else None
 
-                if compare_stats is not None and driver_stats is not None:
-                    st.markdown(f"""
-                    <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
-                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                            <span>Overall Rating</span>
-                            <span><strong>{int(driver_stats['overall_rating'])}</strong> vs <strong>{int(compare_stats['overall_rating'])}</strong></span>
+                    if compare_stats is not None and driver_stats is not None:
+                        st.markdown(f"""
+                        <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                                <span>Overall Rating</span>
+                                <span><strong>{int(driver_stats.get('overall_rating', 50) or 50)}</strong> vs <strong>{int(compare_stats.get('overall_rating', 50) or 50)}</strong></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                                <span>Best Lap Time</span>
+                                <span>{format_lap_time(driver_stats.get('best_lap_time_seconds', 0))} vs {format_lap_time(compare_stats.get('best_lap_time_seconds', 0))}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                                <span>Consistency</span>
+                                <span><strong>{int(driver_stats.get('consistency_score', 50) or 50)}</strong> vs <strong>{int(compare_stats.get('consistency_score', 50) or 50)}</strong></span>
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                            <span>Best Lap Time</span>
-                            <span>{format_lap_time(driver_stats['best_lap_time_seconds'])} vs {format_lap_time(compare_stats['best_lap_time_seconds'])}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                            <span>Consistency</span>
-                            <span><strong>{int(driver_stats['consistency_score'])}</strong> vs <strong>{int(compare_stats['consistency_score'])}</strong></span>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-        else:
-            st.info("No other drivers available for comparison")
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.info("Stats not available for comparison")
+                        st.write("Debug - driver_stats exists:", driver_stats is not None)
+                        st.write("Debug - compare_stats exists:", compare_stats is not None)
+            else:
+                st.info("No other drivers available for comparison")
+        except Exception as e:
+            st.error(f"Error loading comparison: {str(e)}")
 
     # Row 3: Strengths & Weaknesses + Championship Stats
     col1, col2 = st.columns(2)
@@ -1105,29 +1163,36 @@ def show_driver_detail(driver_number):
     with col1:
         st.markdown("#### Widget 5: Strengths & Weaknesses")
 
-        if driver_stats is not None:
-            # Calculate top 3 strengths and weaknesses
-            scores = {
-                'Braking': driver_stats.get('braking_score', 50),
-                'Cornering': driver_stats.get('cornering_score', 50),
-                'Throttle': driver_stats.get('throttle_score', 50),
-                'Consistency': driver_stats.get('consistency_score', 50),
-                'Racecraft': driver_stats.get('racecraft_score', 50),
-                'Qualifying': driver_stats.get('qualifying_score', 50)
-            }
+        try:
+            if driver_stats is not None:
+                # Calculate top 3 strengths and weaknesses
+                scores = {
+                    'Braking': float(driver_stats.get('braking_score', 50) or 50),
+                    'Cornering': float(driver_stats.get('cornering_score', 50) or 50),
+                    'Throttle': float(driver_stats.get('throttle_score', 50) or 50),
+                    'Consistency': float(driver_stats.get('consistency_score', 50) or 50),
+                    'Racecraft': float(driver_stats.get('racecraft_score', 50) or 50),
+                    'Qualifying': float(driver_stats.get('qualifying_score', 50) or 50)
+                }
 
-            sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+                sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
-            st.markdown("<div style='background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;'>", unsafe_allow_html=True)
-            st.markdown("<strong style='color: #4CAF50;'>💪 Top Strengths:</strong>", unsafe_allow_html=True)
-            for i, (skill, score) in enumerate(sorted_scores[:3]):
-                st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
+                st.markdown("<div style='background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;'>", unsafe_allow_html=True)
+                st.markdown("<strong style='color: #4CAF50;'>💪 Top Strengths:</strong>", unsafe_allow_html=True)
+                for i, (skill, score) in enumerate(sorted_scores[:3]):
+                    st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
 
-            st.markdown("<br><strong style='color: #FF6B6B;'>⚠️ Areas for Improvement:</strong>", unsafe_allow_html=True)
-            for i, (skill, score) in enumerate(list(reversed(sorted_scores))[:3]):
-                st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
+                st.markdown("<br><strong style='color: #FF6B6B;'>⚠️ Areas for Improvement:</strong>", unsafe_allow_html=True)
+                for i, (skill, score) in enumerate(list(reversed(sorted_scores))[:3]):
+                    st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
 
-            st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+            else:
+                st.info("Stats not available")
+                st.write("Debug - driver_stats:", driver_stats)
+        except Exception as e:
+            st.error(f"Error loading strengths/weaknesses: {str(e)}")
+            st.write("Debug - driver_stats:", driver_stats)
 
     with col2:
         st.markdown("#### Widget 6: Championship Stats")
