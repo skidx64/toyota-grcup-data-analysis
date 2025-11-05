@@ -464,46 +464,9 @@ def load_custom_css():
         color: #FFFFFF;
     }
 
-    /* Track Cards - FIFA Style with darker red - 56% Larger (30% + 20% more) */
+    /* Track Cards - FIFA Style - LARGER SIZE */
     .track-card {
-        background: linear-gradient(180deg, #8B0000 0%, #4B0000 100%);
-        border-radius: 12px;
-        padding: 1.95rem;
-        color: white;
-        box-shadow:
-            0 6px 16px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.1),
-            inset 0 -1px 0 rgba(0,0,0,0.5);
-        margin: 0.78rem;
-        transition: all 0.3s ease;
-        height: 100%;
-        min-height: 343px;
-        max-height: 374px;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        border: 2px solid rgba(139, 0, 0, 0.8);
-        position: relative;
-        cursor: pointer;
-        overflow: hidden;
-        word-wrap: break-word;
-    }
-
-    .track-card * {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .track-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: 15px;
-        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(0,0,0,0.2) 100%);
-        pointer-events: none;
+        /* All styling set by inline styles - don't override */
     }
 
     .track-card:hover {
@@ -511,114 +474,13 @@ def load_custom_css():
         box-shadow:
             0 16px 40px rgba(139, 0, 0, 0.8),
             inset 0 1px 0 rgba(255,255,255,0.2),
-            inset 0 -1px 0 rgba(0,0,0,0.5);
-        border-color: rgba(255, 0, 0, 0.9);
+            inset 0 -1px 0 rgba(0,0,0,0.5) !important;
+        border-color: rgba(255, 0, 0, 0.9) !important;
     }
 
-    .track-header {
-        text-align: center;
-        margin-bottom: 1rem;
-    }
-
-    .track-code {
-        font-size: 2rem;
-        font-weight: 800;
-        color: white;
-        margin-bottom: 0.35rem;
-        letter-spacing: 1.5px;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-    .track-name {
-        font-size: 1rem;
-        font-weight: 600;
-        color: rgba(255,255,255,0.95);
-        margin-bottom: 0.2rem;
-    }
-
-    .track-location {
-        text-align: center;
-        font-size: 0.8rem;
-        color: rgba(255,255,255,0.85);
-        margin-bottom: 0.75rem;
-        font-weight: 500;
-    }
-
-    .track-divider {
-        height: 2px;
-        background: rgba(255,255,255,0.3);
-        margin: 1rem 0;
-        border-radius: 1px;
-    }
-
-    .track-stats-grid {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 0.75rem;
-    }
-
-    .track-stat-item {
-        background: rgba(255,255,255,0.15);
-        padding: 0.5rem;
-        border-radius: 6px;
-        text-align: center;
-        backdrop-filter: blur(10px);
-    }
-
-    .track-stat-label {
-        font-size: 0.65rem;
-        color: rgba(255,255,255,0.8);
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
-        margin-bottom: 0.2rem;
-        font-weight: 600;
-    }
-
-    .track-stat-value {
-        font-size: 1rem;
-        font-weight: 700;
-        color: white;
-    }
-
-    /* Driver Cards - FIFA Style with tier colors - 30% Larger */
+    /* Driver Cards - FIFA Style with tier colors - LARGER SIZE */
     .driver-card {
-        border-radius: 12px;
-        padding: 1.625rem;
-        color: white;
-        box-shadow:
-            0 6px 16px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.15),
-            inset 0 -1px 0 rgba(0,0,0,0.5);
-        margin: 0.65rem;
-        transition: all 0.3s ease;
-        height: 100%;
-        min-height: 286px;
-        max-height: 312px;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        border: 2px solid;
-        position: relative;
-        cursor: pointer;
-        overflow: hidden;
-        word-wrap: break-word;
-    }
-
-    .driver-card * {
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .driver-card::before {
-        content: '';
-        position: absolute;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        border-radius: 15px;
-        background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
-        pointer-events: none;
+        /* Size set by inline styles - don't override */
     }
 
     .driver-card:hover {
@@ -626,16 +488,8 @@ def load_custom_css():
         box-shadow:
             0 16px 40px rgba(0,0,0,0.9),
             inset 0 1px 0 rgba(255,255,255,0.25),
-            inset 0 -1px 0 rgba(0,0,0,0.5);
+            inset 0 -1px 0 rgba(0,0,0,0.5) !important;
         filter: brightness(1.1);
-    }
-
-    .driver-rating {
-        font-size: 2.5rem;
-        font-weight: 900;
-        margin: 0.5rem 0;
-        color: white;
-        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .card-name {
