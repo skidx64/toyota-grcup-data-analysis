@@ -580,15 +580,14 @@ def load_custom_css():
         color: white;
     }
 
-    /* Driver Cards - FIFA Style with darker red - 30% Larger */
+    /* Driver Cards - FIFA Style with tier colors - 30% Larger */
     .driver-card {
-        background: linear-gradient(180deg, #8B0000 0%, #4B0000 100%);
         border-radius: 12px;
         padding: 1.625rem;
         color: white;
         box-shadow:
             0 6px 16px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.15),
             inset 0 -1px 0 rgba(0,0,0,0.5);
         margin: 0.65rem;
         transition: all 0.3s ease;
@@ -598,7 +597,7 @@ def load_custom_css():
         display: flex;
         flex-direction: column;
         align-items: center;
-        border: 2px solid rgba(139, 0, 0, 0.8);
+        border: 2px solid;
         position: relative;
         cursor: pointer;
         overflow: hidden;
@@ -618,23 +617,25 @@ def load_custom_css():
         right: 0;
         bottom: 0;
         border-radius: 15px;
-        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(0,0,0,0.2) 100%);
+        background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
         pointer-events: none;
     }
 
     .driver-card:hover {
         transform: translateY(-8px) scale(1.02);
         box-shadow:
-            0 16px 40px rgba(139, 0, 0, 0.8),
-            inset 0 1px 0 rgba(255,255,255,0.2),
+            0 16px 40px rgba(0,0,0,0.9),
+            inset 0 1px 0 rgba(255,255,255,0.25),
             inset 0 -1px 0 rgba(0,0,0,0.5);
-        border-color: rgba(255, 0, 0, 0.9);
+        filter: brightness(1.1);
     }
 
-    .driver-avatar {
-        font-size: 3rem;
+    .driver-rating {
+        font-size: 2.5rem;
+        font-weight: 900;
         margin: 0.5rem 0;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .card-name {
@@ -804,31 +805,53 @@ def render_header(summary):
 
 
 def render_driver_card(driver_row):
-    """Render a single driver card with red gradient and face placeholder"""
+    """Render a single driver card with FIFA-style stats and tier color-coding"""
     driver_num = int(driver_row['driver_number'])
-    best_finish = int(driver_row['best_finish'])
-    total_races = int(driver_row['total_races'])
-    total_podiums = int(driver_row.get('total_podiums', 0)) if pd.notna(driver_row.get('total_podiums')) else 0
+
+    # Get stats with defaults for missing values
+    overall_rating = int(driver_row['overall_rating']) if pd.notna(driver_row.get('overall_rating')) else 50
+    pace = int(driver_row.get('braking_score', 50)) if pd.notna(driver_row.get('braking_score')) else 50
+    consistency = int(driver_row.get('consistency_score', 50)) if pd.notna(driver_row.get('consistency_score')) else 50
+    qualifying = int(driver_row.get('qualifying_score', 50)) if pd.notna(driver_row.get('qualifying_score')) else 50
+    racecraft = int(driver_row.get('racecraft_score', 50)) if pd.notna(driver_row.get('racecraft_score')) else 50
+
+    # Determine tier based on overall rating
+    if overall_rating >= 80:
+        tier = "gold"
+        tier_gradient = "linear-gradient(180deg, #FFD700 0%, #B8860B 100%)"
+        tier_border = "rgba(255, 215, 0, 0.9)"
+    elif overall_rating >= 65:
+        tier = "silver"
+        tier_gradient = "linear-gradient(180deg, #C0C0C0 0%, #808080 100%)"
+        tier_border = "rgba(192, 192, 192, 0.9)"
+    else:
+        tier = "bronze"
+        tier_gradient = "linear-gradient(180deg, #CD7F32 0%, #8B5A2B 100%)"
+        tier_border = "rgba(205, 127, 50, 0.9)"
 
     card_html = f"""
-    <div class="driver-card">
-        <div class="driver-avatar">👤</div>
+    <div class="driver-card" style="background: {tier_gradient}; border-color: {tier_border};">
+        <div class="driver-rating" style="font-size: 2.5rem; font-weight: 900; margin: 0.5rem 0; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            {overall_rating}
+        </div>
         <div class="card-name">Driver #{driver_num}</div>
-        <div class="card-stat">
-            <span class="stat-label">Best Finish:</span>
-            <span class="stat-value">P{best_finish}</span>
-        </div>
-        <div class="card-stat">
-            <span class="stat-label">Races:</span>
-            <span class="stat-value">{total_races}</span>
-        </div>
-        <div class="card-stat">
-            <span class="stat-label">Podiums:</span>
-            <span class="stat-value">{total_podiums}</span>
-        </div>
-        <div class="card-stat">
-            <span class="stat-label">Avg Position:</span>
-            <span class="stat-value">P{int(driver_row['avg_position']) if pd.notna(driver_row['avg_position']) else 'N/A'}</span>
+        <div style="width: 100%; margin: 0.75rem 0;">
+            <div class="card-stat">
+                <span class="stat-label">PACE</span>
+                <span class="stat-value">{pace}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">CONSISTENCY</span>
+                <span class="stat-value">{consistency}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">QUALIFYING</span>
+                <span class="stat-value">{qualifying}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">RACECRAFT</span>
+                <span class="stat-value">{racecraft}</span>
+            </div>
         </div>
     </div>
     """
