@@ -1009,68 +1009,79 @@ def show_driver_detail(driver_number):
 
     with col1:
         st.markdown("#### Widget 1: Performance Radar")
-        if driver_stats is not None:
-            categories = ['Braking', 'Cornering', 'Throttle', 'Consistency', 'Racecraft', 'Qualifying']
-            values = [
-                driver_stats.get('braking_score', 50),
-                driver_stats.get('cornering_score', 50),
-                driver_stats.get('throttle_score', 50),
-                driver_stats.get('consistency_score', 50),
-                driver_stats.get('racecraft_score', 50),
-                driver_stats.get('qualifying_score', 50)
-            ]
+        try:
+            if driver_stats is not None:
+                categories = ['Braking', 'Cornering', 'Throttle', 'Consistency', 'Racecraft', 'Qualifying']
+                values = [
+                    float(driver_stats.get('braking_score', 50) or 50),
+                    float(driver_stats.get('cornering_score', 50) or 50),
+                    float(driver_stats.get('throttle_score', 50) or 50),
+                    float(driver_stats.get('consistency_score', 50) or 50),
+                    float(driver_stats.get('racecraft_score', 50) or 50),
+                    float(driver_stats.get('qualifying_score', 50) or 50)
+                ]
 
-            fig = go.Figure(data=go.Scatterpolar(
-                r=values,
-                theta=categories,
-                fill='toself',
-                line=dict(color='#8B0000', width=2),
-                fillcolor='rgba(139, 0, 0, 0.3)'
-            ))
+                fig = go.Figure(data=go.Scatterpolar(
+                    r=values,
+                    theta=categories,
+                    fill='toself',
+                    line=dict(color='#8B0000', width=2),
+                    fillcolor='rgba(139, 0, 0, 0.3)'
+                ))
 
-            fig.update_layout(
-                polar=dict(
-                    radialaxis=dict(visible=True, range=[0, 100]),
-                    bgcolor='rgba(0,0,0,0.1)'
-                ),
-                showlegend=False,
-                height=350,
-                paper_bgcolor='rgba(0,0,0,0)',
-                plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='#E0E0E0')
-            )
+                fig.update_layout(
+                    polar=dict(
+                        radialaxis=dict(visible=True, range=[0, 100]),
+                        bgcolor='rgba(0,0,0,0.1)'
+                    ),
+                    showlegend=False,
+                    height=350,
+                    paper_bgcolor='rgba(0,0,0,0)',
+                    plot_bgcolor='rgba(0,0,0,0)',
+                    font=dict(color='#E0E0E0')
+                )
 
-            st.plotly_chart(fig, use_container_width=True)
+                st.plotly_chart(fig, use_container_width=True)
+            else:
+                st.info("Driver stats not available")
+        except Exception as e:
+            st.error(f"Error loading radar chart: {str(e)}")
+            st.write("Debug - driver_stats:", driver_stats)
 
     with col2:
         st.markdown("#### Widget 2: Track Suitability Matrix")
 
-        # Get best lap per track for this driver
-        track_performance = driver_data['best_laps']
+        try:
+            # Get best lap per track for this driver
+            track_performance = driver_data['best_laps']
 
-        if not track_performance.empty:
-            # Create heatmap-style display
-            st.markdown("""
-            <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;">
-            """, unsafe_allow_html=True)
-
-            for _, row in track_performance.iterrows():
-                track_code = row['track_code']
-                best_lap = format_lap_time(row['best_lap_seconds'])
-
-                # Simple color coding (green/yellow/red based on relative performance)
-                color = "#4CAF50"  # Green by default
-
-                st.markdown(f"""
-                <div style="display: flex; justify-content: space-between; padding: 0.5rem; margin: 0.25rem 0; background: {color}22; border-left: 3px solid {color}; border-radius: 4px;">
-                    <span style="font-weight: 600; color: #E0E0E0;">{track_code}</span>
-                    <span style="color: #E0E0E0;">{best_lap}</span>
-                </div>
+            if not track_performance.empty:
+                # Create heatmap-style display
+                st.markdown("""
+                <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;">
                 """, unsafe_allow_html=True)
 
-            st.markdown("</div>", unsafe_allow_html=True)
-        else:
-            st.info("No track data available")
+                for _, row in track_performance.iterrows():
+                    track_code = row['track_code']
+                    best_lap = format_lap_time(row['best_lap_seconds'])
+
+                    # Simple color coding (green/yellow/red based on relative performance)
+                    color = "#4CAF50"  # Green by default
+
+                    st.markdown(f"""
+                    <div style="display: flex; justify-content: space-between; padding: 0.5rem; margin: 0.25rem 0; background: {color}22; border-left: 3px solid {color}; border-radius: 4px;">
+                        <span style="font-weight: 600; color: #E0E0E0;">{track_code}</span>
+                        <span style="color: #E0E0E0;">{best_lap}</span>
+                    </div>
+                    """, unsafe_allow_html=True)
+
+                st.markdown("</div>", unsafe_allow_html=True)
+            else:
+                st.info("No track performance data available")
+                st.write(f"Debug - Track data rows: {len(track_performance)}")
+        except Exception as e:
+            st.error(f"Error loading track matrix: {str(e)}")
+            st.write("Debug - best_laps data:", driver_data.get('best_laps', 'N/A'))
 
     # Row 2: Season Progression + Head-to-Head
     col1, col2 = st.columns(2)
@@ -1108,36 +1119,43 @@ def show_driver_detail(driver_number):
     with col2:
         st.markdown("#### Widget 4: Head-to-Head Comparison")
 
-        # Get all drivers for comparison
-        all_drivers_df = get_all_drivers()
-        other_drivers = all_drivers_df[all_drivers_df['driver_number'] != driver_number]['driver_number'].tolist()
+        try:
+            # Get all drivers for comparison
+            all_drivers_df = get_all_drivers()
+            other_drivers = all_drivers_df[all_drivers_df['driver_number'] != driver_number]['driver_number'].tolist()
 
-        if other_drivers:
-            compare_driver = st.selectbox("Select driver to compare", other_drivers, key=f"compare_{driver_number}")
+            if other_drivers:
+                compare_driver = st.selectbox("Select driver to compare", other_drivers, key=f"compare_{driver_number}")
 
-            if compare_driver:
-                compare_data = get_driver_details(compare_driver)
-                compare_stats = compare_data['stats'].iloc[0] if not compare_data['stats'].empty else None
+                if compare_driver:
+                    compare_data = get_driver_details(compare_driver)
+                    compare_stats = compare_data['stats'].iloc[0] if not compare_data['stats'].empty else None
 
-                if compare_stats is not None and driver_stats is not None:
-                    st.markdown(f"""
-                    <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
-                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                            <span>Overall Rating</span>
-                            <span><strong>{int(driver_stats['overall_rating'])}</strong> vs <strong>{int(compare_stats['overall_rating'])}</strong></span>
+                    if compare_stats is not None and driver_stats is not None:
+                        st.markdown(f"""
+                        <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                            <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                                <span>Overall Rating</span>
+                                <span><strong>{int(driver_stats.get('overall_rating', 50) or 50)}</strong> vs <strong>{int(compare_stats.get('overall_rating', 50) or 50)}</strong></span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                                <span>Best Lap Time</span>
+                                <span>{format_lap_time(driver_stats.get('best_lap_time_seconds', 0))} vs {format_lap_time(compare_stats.get('best_lap_time_seconds', 0))}</span>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                                <span>Consistency</span>
+                                <span><strong>{int(driver_stats.get('consistency_score', 50) or 50)}</strong> vs <strong>{int(compare_stats.get('consistency_score', 50) or 50)}</strong></span>
+                            </div>
                         </div>
-                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                            <span>Best Lap Time</span>
-                            <span>{format_lap_time(driver_stats['best_lap_time_seconds'])} vs {format_lap_time(compare_stats['best_lap_time_seconds'])}</span>
-                        </div>
-                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
-                            <span>Consistency</span>
-                            <span><strong>{int(driver_stats['consistency_score'])}</strong> vs <strong>{int(compare_stats['consistency_score'])}</strong></span>
-                        </div>
-                    </div>
-                    """, unsafe_allow_html=True)
-        else:
-            st.info("No other drivers available for comparison")
+                        """, unsafe_allow_html=True)
+                    else:
+                        st.info("Stats not available for comparison")
+                        st.write("Debug - driver_stats exists:", driver_stats is not None)
+                        st.write("Debug - compare_stats exists:", compare_stats is not None)
+            else:
+                st.info("No other drivers available for comparison")
+        except Exception as e:
+            st.error(f"Error loading comparison: {str(e)}")
 
     # Row 3: Strengths & Weaknesses + Championship Stats
     col1, col2 = st.columns(2)
@@ -1145,29 +1163,36 @@ def show_driver_detail(driver_number):
     with col1:
         st.markdown("#### Widget 5: Strengths & Weaknesses")
 
-        if driver_stats is not None:
-            # Calculate top 3 strengths and weaknesses
-            scores = {
-                'Braking': driver_stats.get('braking_score', 50),
-                'Cornering': driver_stats.get('cornering_score', 50),
-                'Throttle': driver_stats.get('throttle_score', 50),
-                'Consistency': driver_stats.get('consistency_score', 50),
-                'Racecraft': driver_stats.get('racecraft_score', 50),
-                'Qualifying': driver_stats.get('qualifying_score', 50)
-            }
+        try:
+            if driver_stats is not None:
+                # Calculate top 3 strengths and weaknesses
+                scores = {
+                    'Braking': float(driver_stats.get('braking_score', 50) or 50),
+                    'Cornering': float(driver_stats.get('cornering_score', 50) or 50),
+                    'Throttle': float(driver_stats.get('throttle_score', 50) or 50),
+                    'Consistency': float(driver_stats.get('consistency_score', 50) or 50),
+                    'Racecraft': float(driver_stats.get('racecraft_score', 50) or 50),
+                    'Qualifying': float(driver_stats.get('qualifying_score', 50) or 50)
+                }
 
-            sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+                sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
-            st.markdown("<div style='background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;'>", unsafe_allow_html=True)
-            st.markdown("<strong style='color: #4CAF50;'>💪 Top Strengths:</strong>", unsafe_allow_html=True)
-            for i, (skill, score) in enumerate(sorted_scores[:3]):
-                st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
+                st.markdown("<div style='background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;'>", unsafe_allow_html=True)
+                st.markdown("<strong style='color: #4CAF50;'>💪 Top Strengths:</strong>", unsafe_allow_html=True)
+                for i, (skill, score) in enumerate(sorted_scores[:3]):
+                    st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
 
-            st.markdown("<br><strong style='color: #FF6B6B;'>⚠️ Areas for Improvement:</strong>", unsafe_allow_html=True)
-            for i, (skill, score) in enumerate(list(reversed(sorted_scores))[:3]):
-                st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
+                st.markdown("<br><strong style='color: #FF6B6B;'>⚠️ Areas for Improvement:</strong>", unsafe_allow_html=True)
+                for i, (skill, score) in enumerate(list(reversed(sorted_scores))[:3]):
+                    st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
 
-            st.markdown("</div>", unsafe_allow_html=True)
+                st.markdown("</div>", unsafe_allow_html=True)
+            else:
+                st.info("Stats not available")
+                st.write("Debug - driver_stats:", driver_stats)
+        except Exception as e:
+            st.error(f"Error loading strengths/weaknesses: {str(e)}")
+            st.write("Debug - driver_stats:", driver_stats)
 
     with col2:
         st.markdown("#### Widget 6: Championship Stats")
