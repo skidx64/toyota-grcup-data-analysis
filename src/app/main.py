@@ -580,15 +580,14 @@ def load_custom_css():
         color: white;
     }
 
-    /* Driver Cards - FIFA Style with darker red - 30% Larger */
+    /* Driver Cards - FIFA Style with tier colors - 30% Larger */
     .driver-card {
-        background: linear-gradient(180deg, #8B0000 0%, #4B0000 100%);
         border-radius: 12px;
         padding: 1.625rem;
         color: white;
         box-shadow:
             0 6px 16px rgba(0,0,0,0.6),
-            inset 0 1px 0 rgba(255,255,255,0.1),
+            inset 0 1px 0 rgba(255,255,255,0.15),
             inset 0 -1px 0 rgba(0,0,0,0.5);
         margin: 0.65rem;
         transition: all 0.3s ease;
@@ -598,7 +597,7 @@ def load_custom_css():
         display: flex;
         flex-direction: column;
         align-items: center;
-        border: 2px solid rgba(139, 0, 0, 0.8);
+        border: 2px solid;
         position: relative;
         cursor: pointer;
         overflow: hidden;
@@ -618,23 +617,25 @@ def load_custom_css():
         right: 0;
         bottom: 0;
         border-radius: 15px;
-        background: linear-gradient(135deg, rgba(255,255,255,0.1) 0%, transparent 50%, rgba(0,0,0,0.2) 100%);
+        background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 50%, rgba(0,0,0,0.3) 100%);
         pointer-events: none;
     }
 
     .driver-card:hover {
         transform: translateY(-8px) scale(1.02);
         box-shadow:
-            0 16px 40px rgba(139, 0, 0, 0.8),
-            inset 0 1px 0 rgba(255,255,255,0.2),
+            0 16px 40px rgba(0,0,0,0.9),
+            inset 0 1px 0 rgba(255,255,255,0.25),
             inset 0 -1px 0 rgba(0,0,0,0.5);
-        border-color: rgba(255, 0, 0, 0.9);
+        filter: brightness(1.1);
     }
 
-    .driver-avatar {
-        font-size: 3rem;
+    .driver-rating {
+        font-size: 2.5rem;
+        font-weight: 900;
         margin: 0.5rem 0;
-        filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        color: white;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     .card-name {
@@ -804,31 +805,53 @@ def render_header(summary):
 
 
 def render_driver_card(driver_row):
-    """Render a single driver card with red gradient and face placeholder"""
+    """Render a single driver card with FIFA-style stats and tier color-coding"""
     driver_num = int(driver_row['driver_number'])
-    best_finish = int(driver_row['best_finish'])
-    total_races = int(driver_row['total_races'])
-    total_podiums = int(driver_row.get('total_podiums', 0)) if pd.notna(driver_row.get('total_podiums')) else 0
+
+    # Get stats with defaults for missing values
+    overall_rating = int(driver_row['overall_rating']) if pd.notna(driver_row.get('overall_rating')) else 50
+    pace = int(driver_row.get('braking_score', 50)) if pd.notna(driver_row.get('braking_score')) else 50
+    consistency = int(driver_row.get('consistency_score', 50)) if pd.notna(driver_row.get('consistency_score')) else 50
+    qualifying = int(driver_row.get('qualifying_score', 50)) if pd.notna(driver_row.get('qualifying_score')) else 50
+    racecraft = int(driver_row.get('racecraft_score', 50)) if pd.notna(driver_row.get('racecraft_score')) else 50
+
+    # Determine tier based on overall rating
+    if overall_rating >= 80:
+        tier = "gold"
+        tier_gradient = "linear-gradient(180deg, #FFD700 0%, #B8860B 100%)"
+        tier_border = "rgba(255, 215, 0, 0.9)"
+    elif overall_rating >= 65:
+        tier = "silver"
+        tier_gradient = "linear-gradient(180deg, #C0C0C0 0%, #808080 100%)"
+        tier_border = "rgba(192, 192, 192, 0.9)"
+    else:
+        tier = "bronze"
+        tier_gradient = "linear-gradient(180deg, #CD7F32 0%, #8B5A2B 100%)"
+        tier_border = "rgba(205, 127, 50, 0.9)"
 
     card_html = f"""
-    <div class="driver-card">
-        <div class="driver-avatar">👤</div>
+    <div class="driver-card" style="background: {tier_gradient}; border-color: {tier_border};">
+        <div class="driver-rating" style="font-size: 2.5rem; font-weight: 900; margin: 0.5rem 0; color: white; text-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+            {overall_rating}
+        </div>
         <div class="card-name">Driver #{driver_num}</div>
-        <div class="card-stat">
-            <span class="stat-label">Best Finish:</span>
-            <span class="stat-value">P{best_finish}</span>
-        </div>
-        <div class="card-stat">
-            <span class="stat-label">Races:</span>
-            <span class="stat-value">{total_races}</span>
-        </div>
-        <div class="card-stat">
-            <span class="stat-label">Podiums:</span>
-            <span class="stat-value">{total_podiums}</span>
-        </div>
-        <div class="card-stat">
-            <span class="stat-label">Avg Position:</span>
-            <span class="stat-value">P{int(driver_row['avg_position']) if pd.notna(driver_row['avg_position']) else 'N/A'}</span>
+        <div style="width: 100%; margin: 0.75rem 0;">
+            <div class="card-stat">
+                <span class="stat-label">PACE</span>
+                <span class="stat-value">{pace}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">CONSISTENCY</span>
+                <span class="stat-value">{consistency}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">QUALIFYING</span>
+                <span class="stat-value">{qualifying}</span>
+            </div>
+            <div class="card-stat">
+                <span class="stat-label">RACECRAFT</span>
+                <span class="stat-value">{racecraft}</span>
+            </div>
         </div>
     </div>
     """
@@ -837,12 +860,28 @@ def render_driver_card(driver_row):
 
 
 def render_track_card(track_row):
-    """Render a single track card with enhanced styling"""
+    """Render a single track card with enhanced styling and badges"""
     track_code = track_row['track_code']
     track_name = track_row['track_name']
     location = track_row['location']
     length = float(track_row['length_miles'])
     lap_record = track_row.get('lap_record_seconds', 0)
+    top_speed = track_row.get('top_speed_kph', 0)
+    difficulty = track_row.get('track_difficulty_score', 70)
+
+    # Determine track type based on length and characteristics
+    if length < 2.5:
+        track_type = "Technical"
+        type_color = "#FF6B6B"
+    elif length > 3.5:
+        track_type = "High-Speed"
+        type_color = "#4ECDC4"
+    else:
+        track_type = "Mixed"
+        type_color = "#FFE66D"
+
+    # Weather icon (placeholder)
+    weather_icon = "🌤️"
 
     card_html = f"""
     <div class="track-card">
@@ -850,7 +889,19 @@ def render_track_card(track_row):
             <div class="track-code">{track_code}</div>
             <div class="track-name">{track_name}</div>
         </div>
-        <div class="track-location">{location}</div>
+        <div class="track-location">{location} {weather_icon}</div>
+        <div style="display: flex; justify-content: center; margin: 0.5rem 0;">
+            <span style="
+                background: {type_color};
+                color: #000;
+                padding: 0.25rem 0.75rem;
+                border-radius: 12px;
+                font-size: 0.7rem;
+                font-weight: 700;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            ">{track_type}</span>
+        </div>
         <div class="track-divider"></div>
         <div class="track-stats-grid">
             <div class="track-stat-item">
@@ -858,8 +909,16 @@ def render_track_card(track_row):
                 <div class="track-stat-value">{length:.2f} mi</div>
             </div>
             <div class="track-stat-item">
-                <div class="track-stat-label">Lap Record</div>
+                <div class="track-stat-label">Difficulty</div>
+                <div class="track-stat-value">{int(difficulty)}/100</div>
+            </div>
+            <div class="track-stat-item">
+                <div class="track-stat-label">Best Lap</div>
                 <div class="track-stat-value">{format_lap_time(lap_record)}</div>
+            </div>
+            <div class="track-stat-item">
+                <div class="track-stat-label">Top Speed</div>
+                <div class="track-stat-value">{int(top_speed)} kph</div>
             </div>
         </div>
     </div>
@@ -868,13 +927,245 @@ def render_track_card(track_row):
     return card_html
 
 
+def show_driver_detail(driver_number):
+    """Display detailed driver profile with 6 widgets"""
+    import plotly.graph_objects as go
+    import plotly.express as px
+
+    # Get driver details
+    driver_data = get_driver_details(driver_number)
+
+    if driver_data['info'].empty:
+        st.error(f"Driver #{driver_number} not found")
+        return
+
+    driver_info = driver_data['info'].iloc[0]
+    driver_stats = driver_data['stats'].iloc[0] if not driver_data['stats'].empty else None
+
+    # Back button
+    if st.button("← Back to Drivers", type="secondary"):
+        st.session_state.selected_driver = None
+        st.rerun()
+
+    st.title(f"Driver #{driver_number} Profile")
+
+    # Hero Section - Large driver card
+    col1, col2, col3 = st.columns([1, 2, 1])
+    with col2:
+        if driver_stats is not None:
+            overall_rating = int(driver_stats['overall_rating']) if pd.notna(driver_stats.get('overall_rating')) else 50
+            st.markdown(f"""
+            <div style="text-align: center; padding: 2rem; background: linear-gradient(180deg, #8B0000 0%, #4B0000 100%); border-radius: 12px; margin: 1rem 0;">
+                <div style="font-size: 4rem; font-weight: 900; color: white;">{overall_rating}</div>
+                <div style="font-size: 1.5rem; color: rgba(255,255,255,0.9);">Overall Rating</div>
+            </div>
+            """, unsafe_allow_html=True)
+
+    # Widget Grid Layout (2 columns, 3 rows = 6 widgets)
+    st.markdown("### Performance Analysis")
+
+    # Row 1: Performance Radar + Track Suitability
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Widget 1: Performance Radar")
+        if driver_stats is not None:
+            categories = ['Braking', 'Cornering', 'Throttle', 'Consistency', 'Racecraft', 'Qualifying']
+            values = [
+                driver_stats.get('braking_score', 50),
+                driver_stats.get('cornering_score', 50),
+                driver_stats.get('throttle_score', 50),
+                driver_stats.get('consistency_score', 50),
+                driver_stats.get('racecraft_score', 50),
+                driver_stats.get('qualifying_score', 50)
+            ]
+
+            fig = go.Figure(data=go.Scatterpolar(
+                r=values,
+                theta=categories,
+                fill='toself',
+                line=dict(color='#8B0000', width=2),
+                fillcolor='rgba(139, 0, 0, 0.3)'
+            ))
+
+            fig.update_layout(
+                polar=dict(
+                    radialaxis=dict(visible=True, range=[0, 100]),
+                    bgcolor='rgba(0,0,0,0.1)'
+                ),
+                showlegend=False,
+                height=350,
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(0,0,0,0)',
+                font=dict(color='#E0E0E0')
+            )
+
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col2:
+        st.markdown("#### Widget 2: Track Suitability Matrix")
+
+        # Get best lap per track for this driver
+        track_performance = driver_data['best_laps']
+
+        if not track_performance.empty:
+            # Create heatmap-style display
+            st.markdown("""
+            <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;">
+            """, unsafe_allow_html=True)
+
+            for _, row in track_performance.iterrows():
+                track_code = row['track_code']
+                best_lap = format_lap_time(row['best_lap_seconds'])
+
+                # Simple color coding (green/yellow/red based on relative performance)
+                color = "#4CAF50"  # Green by default
+
+                st.markdown(f"""
+                <div style="display: flex; justify-content: space-between; padding: 0.5rem; margin: 0.25rem 0; background: {color}22; border-left: 3px solid {color}; border-radius: 4px;">
+                    <span style="font-weight: 600; color: #E0E0E0;">{track_code}</span>
+                    <span style="color: #E0E0E0;">{best_lap}</span>
+                </div>
+                """, unsafe_allow_html=True)
+
+            st.markdown("</div>", unsafe_allow_html=True)
+        else:
+            st.info("No track data available")
+
+    # Row 2: Season Progression + Head-to-Head
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Widget 3: Season Progression")
+
+        race_results = driver_data['results']
+
+        if not race_results.empty:
+            fig = px.line(
+                race_results,
+                x=race_results.index,
+                y='position',
+                title='',
+                markers=True
+            )
+
+            fig.update_layout(
+                xaxis_title="Race Number",
+                yaxis_title="Position",
+                yaxis=dict(autorange='reversed'),
+                height=300,
+                paper_bgcolor='rgba(0,0,0,0)',
+                plot_bgcolor='rgba(30,30,30,0.5)',
+                font=dict(color='#E0E0E0')
+            )
+
+            fig.update_traces(line=dict(color='#8B0000', width=3), marker=dict(size=8, color='#FFD700'))
+
+            st.plotly_chart(fig, use_container_width=True)
+        else:
+            st.info("No race data available")
+
+    with col2:
+        st.markdown("#### Widget 4: Head-to-Head Comparison")
+
+        # Get all drivers for comparison
+        all_drivers_df = get_all_drivers()
+        other_drivers = all_drivers_df[all_drivers_df['driver_number'] != driver_number]['driver_number'].tolist()
+
+        if other_drivers:
+            compare_driver = st.selectbox("Select driver to compare", other_drivers, key=f"compare_{driver_number}")
+
+            if compare_driver:
+                compare_data = get_driver_details(compare_driver)
+                compare_stats = compare_data['stats'].iloc[0] if not compare_data['stats'].empty else None
+
+                if compare_stats is not None and driver_stats is not None:
+                    st.markdown(f"""
+                    <div style="background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px; margin-top: 1rem;">
+                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                            <span>Overall Rating</span>
+                            <span><strong>{int(driver_stats['overall_rating'])}</strong> vs <strong>{int(compare_stats['overall_rating'])}</strong></span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                            <span>Best Lap Time</span>
+                            <span>{format_lap_time(driver_stats['best_lap_time_seconds'])} vs {format_lap_time(compare_stats['best_lap_time_seconds'])}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin: 0.5rem 0;">
+                            <span>Consistency</span>
+                            <span><strong>{int(driver_stats['consistency_score'])}</strong> vs <strong>{int(compare_stats['consistency_score'])}</strong></span>
+                        </div>
+                    </div>
+                    """, unsafe_allow_html=True)
+        else:
+            st.info("No other drivers available for comparison")
+
+    # Row 3: Strengths & Weaknesses + Championship Stats
+    col1, col2 = st.columns(2)
+
+    with col1:
+        st.markdown("#### Widget 5: Strengths & Weaknesses")
+
+        if driver_stats is not None:
+            # Calculate top 3 strengths and weaknesses
+            scores = {
+                'Braking': driver_stats.get('braking_score', 50),
+                'Cornering': driver_stats.get('cornering_score', 50),
+                'Throttle': driver_stats.get('throttle_score', 50),
+                'Consistency': driver_stats.get('consistency_score', 50),
+                'Racecraft': driver_stats.get('racecraft_score', 50),
+                'Qualifying': driver_stats.get('qualifying_score', 50)
+            }
+
+            sorted_scores = sorted(scores.items(), key=lambda x: x[1], reverse=True)
+
+            st.markdown("<div style='background: rgba(30,30,30,0.8); padding: 1rem; border-radius: 8px;'>", unsafe_allow_html=True)
+            st.markdown("<strong style='color: #4CAF50;'>💪 Top Strengths:</strong>", unsafe_allow_html=True)
+            for i, (skill, score) in enumerate(sorted_scores[:3]):
+                st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
+
+            st.markdown("<br><strong style='color: #FF6B6B;'>⚠️ Areas for Improvement:</strong>", unsafe_allow_html=True)
+            for i, (skill, score) in enumerate(list(reversed(sorted_scores))[:3]):
+                st.markdown(f"<div style='padding: 0.25rem 0; color: #E0E0E0;'>{i+1}. {skill}: <strong>{int(score)}/100</strong></div>", unsafe_allow_html=True)
+
+            st.markdown("</div>", unsafe_allow_html=True)
+
+    with col2:
+        st.markdown("#### Widget 6: Championship Stats")
+
+        st.markdown(f"""
+        <div style="background: rgba(30,30,30,0.8); padding: 1.5rem; border-radius: 8px;">
+            <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <span style="color: #A0A0A0;">Total Races</span>
+                <span style="color: #FFFFFF; font-weight: 700; font-size: 1.25rem;">{int(driver_info['total_races'])}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <span style="color: #A0A0A0;">Podium Finishes</span>
+                <span style="color: #FFD700; font-weight: 700; font-size: 1.25rem;">{int(driver_stats['total_podiums']) if driver_stats is not None else 0}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.75rem 0; border-bottom: 1px solid rgba(255,255,255,0.1);">
+                <span style="color: #A0A0A0;">Best Finish</span>
+                <span style="color: #4CAF50; font-weight: 700; font-size: 1.25rem;">P{int(driver_info['best_finish'])}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 0.75rem 0;">
+                <span style="color: #A0A0A0;">Avg Position</span>
+                <span style="color: #FFFFFF; font-weight: 700; font-size: 1.25rem;">P{int(driver_info['avg_position']) if pd.notna(driver_info['avg_position']) else 'N/A'}</span>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
+
 def show_drivers_page():
-    """Display driver cards grid"""
+    """Display driver cards grid or driver detail view"""
     # Check if database exists
     if not DATABASE_PATH.exists():
         st.error(f"❌ Database not found at {DATABASE_PATH}")
         st.info("📦 Please run the data pipeline first:")
         st.code("python src/pipeline/ingest_data.py", language="bash")
+        return
+
+    # Check if a driver is selected for detail view
+    if st.session_state.selected_driver is not None:
+        show_driver_detail(st.session_state.selected_driver)
         return
 
     st.title("Driver Profiling")
@@ -1043,6 +1334,10 @@ def show_drivers_page():
         col_idx = idx % num_cols
         with cols[col_idx]:
             st.markdown(render_driver_card(driver), unsafe_allow_html=True)
+            # Add button to view details
+            if st.button("View Details", key=f"driver_{int(driver['driver_number'])}", use_container_width=True):
+                st.session_state.selected_driver = int(driver['driver_number'])
+                st.rerun()
 
 
 def show_tracks_page():
@@ -1127,6 +1422,10 @@ def main():
     # Initialize session state for navigation
     if 'current_page' not in st.session_state:
         st.session_state.current_page = 'drivers'
+    if 'selected_driver' not in st.session_state:
+        st.session_state.selected_driver = None
+    if 'selected_track' not in st.session_state:
+        st.session_state.selected_track = None
 
     # Render fixed header at top of entire app
     if DATABASE_PATH.exists():
